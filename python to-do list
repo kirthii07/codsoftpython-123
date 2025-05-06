@@ -1,0 +1,83 @@
+import json
+import os
+
+FILE_NAME = "tasks.json"
+
+# Load existing tasks from file
+def load_tasks():
+    if os.path.exists(FILE_NAME):
+        with open(FILE_NAME, "r") as file:
+            return json.load(file)
+    return []
+
+# Save tasks to file
+def save_tasks(tasks):
+    with open(FILE_NAME, "w") as file:
+        json.dump(tasks, file, indent=4)
+
+# Display tasks
+def show_tasks(tasks):
+    if not tasks:
+        print("No tasks available.")
+    else:
+        for i, task in enumerate(tasks, 1):
+            status = "✔" if task["completed"] else "✘"
+            print(f"{i}. {task['title']} [{status}]")
+
+# Add a new task
+def add_task(tasks, title):
+    tasks.append({"title": title, "completed": False})
+    save_tasks(tasks)
+    print("Task added successfully!")
+
+# Mark task as completed
+def complete_task(tasks, index):
+    if 0 <= index < len(tasks):
+        tasks[index]["completed"] = True
+        save_tasks(tasks)
+        print("Task marked as completed!")
+    else:
+        print("Invalid task number.")
+
+# Delete a task
+def delete_task(tasks, index):
+    if 0 <= index < len(tasks):
+        tasks.pop(index)
+        save_tasks(tasks)
+        print("Task deleted!")
+    else:
+        print("Invalid task number.")
+
+# Main menu
+def main():
+    tasks = load_tasks()
+    while True:
+        print("\nTo-Do List Manager")
+        print("1. View Tasks")
+        print("2. Add Task")
+        print("3. Complete Task")
+        print("4. Delete Task")
+        print("5. Exit")
+        
+        choice = input("Enter choice: ")
+        if choice == "1":
+            show_tasks(tasks)
+        elif choice == "2":
+            title = input("Task Name: ")
+            add_task(tasks, title)
+        elif choice == "3":
+            show_tasks(tasks)
+            index = int(input("Enter task number to complete: ")) - 1
+            complete_task(tasks, index)
+        elif choice == "4":
+            show_tasks(tasks)
+            index = int(input("Enter task number to delete: ")) - 1
+            delete_task(tasks, index)
+        elif choice == "5":
+            print("Goodbye!")
+            break
+        else:
+            print("Invalid choice, try again.")
+
+if __name__ == "__main__":
+    main()
